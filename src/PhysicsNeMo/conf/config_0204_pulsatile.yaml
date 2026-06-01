@@ -1,0 +1,60 @@
+# Patient 0204 – pulsatile PINN (Modified Fourier 4×256 + ReLoBRaLo).
+#
+# Waveform: 0207 ICA.flow (Q_mean=-4.084 cm³/s, T=0.95 s, 10 Fourier modes).
+# Inlet area: 0.144104 cm²  →  inlet_vel = 2*4.084/0.144104 = 56.68 cm/s
+# STL: stl_files/0204
+#
+# Run:  sbatch jobs/pinn_0204_pulsatile.sbatch
+# SV counterpart: src/SimVascular/inputs/pulsatile/0204_pulsatile_solver.xml
+
+defaults:
+  - physicsnemo_default
+  - arch:
+      - modified_fourier
+  - scheduler: tf_exponential_lr
+  - optimizer: adam
+  - loss: relobralo
+  - _self_
+
+arch:
+  modified_fourier:
+    layer_size: 256
+    nr_layers: 4
+
+scheduler:
+  decay_rate: 0.95
+  decay_steps: 15000
+
+loss:
+  alpha: 0.95
+  beta: 0.99
+  tau: 1.0
+  eps: 1.0e-8
+
+network_dir: "checkpoint_0204_pulsatile"
+
+training:
+  rec_results_freq: 10000
+  rec_constraint_freq: 50000
+  max_steps: 1500000
+
+batch_size:
+  inlet: 700
+  outlet: 400
+  no_slip: 3000
+  interior: 4000
+  integral_continuity: 200
+
+custom:
+  stl_dir: "./stl_files/0204"
+
+  nu: 0.03774
+  inlet_vel: 56.68
+  auto_inlet_npoints: 20000
+  integral_lambda: 0.2
+
+  flow_file: "/home/ucl/elen/ebarette/src/SimVascular/0207_H_CERE_CA/Simulations/Anr_006V1cgsPulsePres/ICA.flow"
+  period: 0.95
+  n_fourier_modes: 10
+  n_train_periods: 1.0
+  monitor_time: 0.0

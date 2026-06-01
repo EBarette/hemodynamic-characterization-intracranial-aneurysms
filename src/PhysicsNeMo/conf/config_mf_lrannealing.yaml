@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 - 2024 NVIDIA CORPORATION & AFFILIATES.
+# SPDX-FileCopyrightText: All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Ablation: Modified Fourier Network + Learning Rate Annealing loss weighting.
+# LR Annealing (Wang et al. 2021, SIAM J. Sci. Comput. 43(5)) computes the
+# mean gradient magnitude of each constraint on the network weights and rescales
+# loss weights so all constraints produce gradients of equal magnitude relative
+# to the reference (continuity equation). Directly implements the NTK-motivated
+# analysis from the paper, specifically designed for PINN loss balancing.
+
+defaults:
+  - physicsnemo_default
+  - arch:
+      - modified_fourier
+  - scheduler: tf_exponential_lr
+  - optimizer: adam
+  - loss: lr_annealing
+  - _self_
+
+arch:
+  modified_fourier:
+    layer_size: 256
+    nr_layers: 4
+
+scheduler:
+  decay_rate: 0.95
+  decay_steps: 15000
+
+# LR Annealing hyperparameters
+# update_freq: recompute weights every N steps (gradient norm computation is
+#              expensive; 200 is a good balance between adaptation speed and cost)
+# alpha:       EMA blending factor for weight update (small = slow/stable)
+# ref_key:     loss key whose gradient norm is used as the target magnitude;
+#              "continuity" makes the incompressibility constraint the anchor
+# eps:         numerical stability for division
+loss:
+  update_freq: 200
+  alpha: 0.01
+  ref_key: "continuity"
+  eps: 1.0e-8
+
+network_dir: "checkpoint_mf_lrannealing"
+
+training:
+  rec_results_freq: 10000
+  rec_constraint_freq: 50000
+  max_steps: 1500000
+
+batch_size:
+  inlet: 700
+  outlet: 400
+  no_slip: 3000
+  interior: 3500
+  integral_continuity: 200
+
+custom:
+  stl_dir: "./stl_files/0203_k1"
+
+  nu: 0.00025
+  inlet_vel: 0.375
+  auto_inlet_npoints: 20000
+  integral_lambda: 0.2

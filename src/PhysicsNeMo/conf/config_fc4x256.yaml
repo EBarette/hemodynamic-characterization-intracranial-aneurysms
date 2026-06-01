@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 - 2024 NVIDIA CORPORATION & AFFILIATES.
+# SPDX-FileCopyrightText: All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Ablation: smaller fully-connected network (4 layers x 256 neurons).
+# ~4x fewer parameters than the default 6x512.  Use to benchmark training
+# speed and accuracy vs. the baseline on the same geometry.
+
+defaults:
+  - physicsnemo_default
+  - arch:
+      - fully_connected
+  - scheduler: tf_exponential_lr
+  - optimizer: adam
+  - loss: sum
+  - _self_
+
+arch:
+  fully_connected:
+    layer_size: 256
+    nr_layers: 4
+
+scheduler:
+  decay_rate: 0.95
+  decay_steps: 15000
+
+network_dir: "checkpoint_fc4x256"
+
+training:
+  rec_results_freq: 10000
+  rec_constraint_freq: 50000
+  max_steps: 1500000
+
+batch_size:
+  inlet: 700
+  outlet: 400
+  no_slip: 3000
+  interior: 3500
+  integral_continuity: 200
+
+custom:
+  stl_dir: "./stl_files/0203_k1"   # change to target geometry as needed
+
+  nu: 0.00025
+  inlet_vel: 0.375
+  auto_inlet_npoints: 20000
+  integral_lambda: 0.2

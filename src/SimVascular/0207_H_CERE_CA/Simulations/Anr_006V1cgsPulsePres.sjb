@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mitk_job model_name="Anr_006V1cgs" mesh_name="Anr_006V1cgs" status="No Data Files" version="1.0">
+    <job>
+        <basic_props>
+            <prop key="Fluid Density" value="1.06" />
+            <prop key="Fluid Viscosity" value="0.04" />
+            <prop key="IC File" value="" />
+            <prop key="Initial Pressure" value="0" />
+            <prop key="Initial Velocities" value="0.0001 0.0001 0.0001" />
+        </basic_props>
+        <cap_props>
+            <cap name="ACA">
+                <prop key="Analytic Shape" value="" />
+                <prop key="BC Type" value="RCR" />
+                <prop key="C Values" value="0.000015" />
+                <prop key="Flip Normal" value="" />
+                <prop key="Flow Rate" value="" />
+                <prop key="Fourier Modes" value="" />
+                <prop key="Original File" value="" />
+                <prop key="Period" value="" />
+                <prop key="Point Number" value="" />
+                <prop key="Pressure" value="0" />
+                <prop key="Pressure Period" value="" />
+                <prop key="Pressure Scaling" value="" />
+                <prop key="R Values" value="190619 1715571" />
+                <prop key="Timed Pressure" value="" />
+                <prop key="Values" value="190619 0.000015 1715571" />
+            </cap>
+            <cap name="ICA">
+                <prop key="Analytic Shape" value="parabolic" />
+                <prop key="BC Type" value="Prescribed Velocities" />
+                <prop key="Flip Normal" value="False" />
+                <prop key="Flow Rate" value="0.000000000000000000e+00 -2.632499999999999840e+00&#x0A;3.030000000000000054e-02 -3.645000000000000018e+00&#x0A;4.320000000000000229e-02 -4.738499999999999268e+00&#x0A;5.909999999999999976e-02 -6.601499999999999702e+00&#x0A;7.040000000000000424e-02 -6.641999999999999460e+00&#x0A;9.020000000000000240e-02 -6.399000000000000021e+00&#x0A;1.110000000000000014e-01 -5.872499999999999609e+00&#x0A;1.409999999999999865e-01 -5.346000000000000085e+00&#x0A;1.759999999999999898e-01 -5.062500000000000000e+00&#x0A;1.970000000000000084e-01 -5.143499999999999517e+00&#x0A;2.119999999999999940e-01 -5.184000000000000163e+00&#x0A;2.399999999999999911e-01 -5.143499999999999517e+00&#x0A;2.650000000000000133e-01 -4.900500000000000078e+00&#x0A;2.909999999999999809e-01 -4.495499999999999829e+00&#x0A;3.170000000000000040e-01 -4.131000000000000227e+00&#x0A;3.390000000000000235e-01 -3.948749999999999538e+00&#x0A;3.699999999999999956e-01 -4.171499999999999986e+00&#x0A;4.079999999999999738e-01 -4.455000000000000071e+00&#x0A;4.460000000000000075e-01 -4.414500000000000313e+00&#x0A;4.839999999999999858e-01 -4.252500000000000391e+00&#x0A;5.320000000000000284e-01 -3.916349999999999554e+00&#x0A;6.029999999999999805e-01 -3.576149999999999718e+00&#x0A;7.219999999999999751e-01 -3.292649999999999633e+00&#x0A;9.499999999999999556e-01 -2.733750000000000124e+00" />
+                <prop key="Fourier Modes" value="10" />
+                <prop key="Original File" value="ICA_Pulsatile_waveform.txt" />
+                <prop key="Period" value=".949999" />
+                <prop key="Point Number" value="201" />
+                <prop key="Pressure" value="" />
+                <prop key="Pressure Period" value="" />
+                <prop key="Pressure Scaling" value="" />
+                <prop key="Timed Pressure" value="" />
+                <prop key="Values" value="" />
+            </cap>
+            <cap name="MCA">
+                <prop key="Analytic Shape" value="" />
+                <prop key="BC Type" value="RCR" />
+                <prop key="C Values" value="0.0000242" />
+                <prop key="Flip Normal" value="" />
+                <prop key="Flow Rate" value="" />
+                <prop key="Fourier Modes" value="" />
+                <prop key="Original File" value="" />
+                <prop key="Period" value="" />
+                <prop key="Point Number" value="" />
+                <prop key="Pressure" value="0" />
+                <prop key="Pressure Period" value="" />
+                <prop key="Pressure Scaling" value="" />
+                <prop key="R Values" value="118405 1065641" />
+                <prop key="Timed Pressure" value="" />
+                <prop key="Values" value="118405 0.0000242 1065641" />
+            </cap>
+        </cap_props>
+        <wall_props>
+            <prop key="Density" value="" />
+            <prop key="Elastic Modulus" value="" />
+            <prop key="Poisson Ratio" value="" />
+            <prop key="Pressure" value="" />
+            <prop key="Shear Constant" value="" />
+            <prop key="Thickness" value="" />
+            <prop key="Type" value="rigid" />
+        </wall_props>
+        <var_props>
+            <face name="ACA">
+                <prop key="Elastic Modulus" value="" />
+                <prop key="Thickness" value="" />
+            </face>
+            <face name="ICA">
+                <prop key="Elastic Modulus" value="" />
+                <prop key="Thickness" value="" />
+            </face>
+            <face name="MCA">
+                <prop key="Elastic Modulus" value="" />
+                <prop key="Thickness" value="" />
+            </face>
+            <face name="Main_wall">
+                <prop key="Elastic Modulus" value="" />
+                <prop key="Thickness" value="" />
+            </face>
+        </var_props>
+        <solver_props>
+            <prop key="Backflow Stabilization Coefficient" value="0.2" />
+            <prop key="Flow Advection Form" value="Convective" />
+            <prop key="Force Calculation Method" value="Velocity Based" />
+            <prop key="Maximum Number of Iterations for svLS Continuity Loop" value="400" />
+            <prop key="Maximum Number of Iterations for svLS Momentum Loop" value="15" />
+            <prop key="Maximum Number of Iterations for svLS NS Solver" value="10" />
+            <prop key="Minimum Required Iterations" value="3" />
+            <prop key="Number of Krylov Vectors per GMRES Sweep" value="100" />
+            <prop key="Number of Solves per Left-hand-side Formation" value="1" />
+            <prop key="Number of Timesteps" value="3000" />
+            <prop key="Number of Timesteps between Restarts" value="20" />
+            <prop key="Output Surface Stress" value="True" />
+            <prop key="Pressure Coupling" value="Implicit" />
+            <prop key="Print Average Solution" value="True" />
+            <prop key="Print Error Indicators" value="False" />
+            <prop key="Quadrature Rule on Boundary" value="3" />
+            <prop key="Quadrature Rule on Interior" value="2" />
+            <prop key="Residual Control" value="True" />
+            <prop key="Residual Criteria" value="0.001" />
+            <prop key="Step Construction" value="2" />
+            <prop key="Time Integration Rho Infinity" value="0.5" />
+            <prop key="Time Integration Rule" value="Second Order" />
+            <prop key="Time Step Size" value="0.001" />
+            <prop key="Tolerance on Continuity Equations" value="0.05" />
+            <prop key="Tolerance on Momentum Equations" value="0.05" />
+            <prop key="Tolerance on svLS NS Solver" value="0.05" />
+            <prop key="svLS Type" value="NS" />
+        </solver_props>
+        <run_props>
+            <prop key="Number of Processes" value="" />
+        </run_props>
+    </job>
+</mitk_job>

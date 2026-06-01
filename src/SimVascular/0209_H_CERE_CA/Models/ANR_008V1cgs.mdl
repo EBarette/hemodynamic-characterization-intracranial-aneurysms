@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<model type="PolyData" version="1.0">
+    <timestep id="0">
+        <model_element type="PolyData" num_sampling="0" use_uniform="1032251776" method="nurbs" sampling="60" sample_per_seg="12" use_linear_sample="1" linear_multiplier="10" use_fft="0" num_modes="20" u_degree="2" v_degree="2" u_knot_type="derivative" v_knot_type="average" u_parametric_type="centripetal" v_parametric_type="chord">
+            <segmentations />
+            <faces>
+                <face id="1" name="main_wall" type="wall" visible="true" opacity="1" color1="1" color2="1" color3="1" />
+                <face id="2" name="C_ICA_UPost" type="cap" visible="true" opacity="1" color1="1" color2="1" color3="1" />
+                <face id="3" name="C_ICA" type="cap" visible="true" opacity="1" color1="1" color2="1" color3="1" />
+            </faces>
+            <blend_radii />
+            <blend_param blend_iters="2" sub_blend_iters="3" cstr_smooth_iters="2" lap_smooth_iters="50" subdivision_iters="1" decimation="0.01" />
+        </model_element>
+    </timestep>
+</model>

@@ -1,0 +1,60 @@
+# Patient 0210 - HYBRID pulsatile PINN (Modified Fourier 4x256 + ReLoBRaLo)
+# Adds a sparse SUPERVISED constraint on FEM samples (PointwiseConstraint.from_numpy)
+# on top of the physics losses. Dataset built by build_hybrid_dataset.py
+# (2000 random nodes per timestep x 20 timesteps = 40k samples spanning one cycle).
+#
+# Run:  sbatch jobs/pinn_0210_hybrid.sbatch
+defaults:
+  - physicsnemo_default
+  - arch:
+      - modified_fourier
+  - scheduler: tf_exponential_lr
+  - optimizer: adam
+  - loss: relobralo
+  - _self_
+
+arch:
+  modified_fourier:
+    layer_size: 256
+    nr_layers: 4
+
+scheduler:
+  decay_rate: 0.95
+  decay_steps: 15000
+
+loss:
+  alpha: 0.95
+  beta: 0.99
+  tau: 1.0
+  eps: 1.0e-8
+
+network_dir: "checkpoint_0210_hybrid"
+
+training:
+  rec_results_freq: 10000
+  rec_constraint_freq: 50000
+  max_steps: 800000
+
+batch_size:
+  inlet: 700
+  outlet: 400
+  no_slip: 3000
+  interior: 4000
+  integral_continuity: 200
+
+custom:
+  stl_dir: "./stl_files/0210"
+  nu: 0.03774
+  inlet_vel: 95.03
+  auto_inlet_npoints: 20000
+  integral_lambda: 0.2
+  flow_file: "/home/ucl/elen/ebarette/src/SimVascular/0207_H_CERE_CA/Simulations/Anr_006V1cgsPulsePres/ICA.flow"
+  period: 0.95
+  n_fourier_modes: 10
+  n_train_periods: 1.0
+  monitor_time: 0.0
+  # HYBRID: supervised constraint on sparse FEM samples
+  hybrid_dataset: "/home/ucl/elen/ebarette/src/Meshing/results/hybrid_data/0210/0210_hybrid_SP2000_N20.npz"
+  hybrid_lambda: 1.0
+  hybrid_batch_size: 2000
+  hybrid_supervise_pressure: true

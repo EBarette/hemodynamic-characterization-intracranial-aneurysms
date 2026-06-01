@@ -1,0 +1,26 @@
+# Simulation outputs and large binary/VTK files
+*.vtu
+*.vtp
+*.bin
+*.vti
+
+# PyTorch model checkpoints
+*.pth
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Hydra / PhysicsNeMo run outputs
+outputs/
+results/
+vtk_snapshots/
+checkpoints/
+
+# SimVascular case images (MRI/CT)
+**/Images/
+
+# OS
+.DS_Store
+Thumbs.db

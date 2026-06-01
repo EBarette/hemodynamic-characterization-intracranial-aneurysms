@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 - 2024 NVIDIA CORPORATION & AFFILIATES.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Pulsatile blood-flow PINN — Hydra config.
+#
+# Based on config_mf_relobralo.yaml (Modified Fourier + ReLoBRaLo) but with
+# the additional `custom.period` / `custom.pulse_amp` parameters that drive
+# the time-dependent inlet waveform.  See aneurysm_pulsatile.py for details.
+
+defaults:
+  - physicsnemo_default
+  - arch:
+      - modified_fourier
+  - scheduler: tf_exponential_lr
+  - optimizer: adam
+  - loss: relobralo
+  - _self_
+
+arch:
+  modified_fourier:
+    # 4 inputs (x, y, z, t).  Width / depth left at the same values that
+    # worked for the steady ablation; pulsatile flow is harder so we may
+    # need to increase later.
+    layer_size: 256
+    nr_layers: 4
+
+scheduler:
+  decay_rate: 0.95
+  decay_steps: 15000
+
+loss:
+  alpha: 0.95
+  beta: 0.99
+  tau: 1.0
+  eps: 1.0e-8
+
+network_dir: "checkpoint_pulsatile"
+
+training:
+  rec_results_freq: 10000
+  rec_constraint_freq: 50000
+  # Pulsatile usually needs more steps than steady; bump the cap.
+  max_steps: 1500000
+
+# Batch sizes: roughly the same as the steady mf_relobralo run.  The interior
+# constraint now also samples t, so each point is denser in inputs but the
+# per-point cost is identical.
+batch_size:
+  inlet: 700
+  outlet: 400
+  no_slip: 3000
+  interior: 4000
+  integral_continuity: 200
+
+custom:
+  stl_dir: "./stl_files/0203_k1"
+
+  # Same fluid parameters as the steady mf_relobralo run (cm / s, rho = 1).
+  nu: 0.00025
+  inlet_vel: 0.375
+  auto_inlet_npoints: 20000
+  integral_lambda: 0.2
+
+  # ---- pulsatile-specific knobs ----------------------------------------
+  # Cardiac cycle [s].  Typical ICA value used in the literature is 0.8 s.
+  period: 0.8
+  # Amplitude of the sinusoidal modulation of the inlet velocity.
+  # waveform(t) = 1 + pulse_amp * sin(2*pi*t/T).  0 -> steady; ~0.5 is the
+  # default; use cfg overrides for parameter sweeps.
+  pulse_amp: 0.5
+  # Train over this many cycles (t ∈ [0, n_train_periods * T]).  1 is fine
+  # because the inlet forcing is exactly periodic.
+  n_train_periods: 1.0
+  # Time at which the cheap training-time WSS / pressure monitors are
+  # evaluated (just a debugging signal in TensorBoard).
+  monitor_time: 0.0

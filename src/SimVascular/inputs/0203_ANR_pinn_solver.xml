@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  svMultiPhysics input file for 0203_H_CERE_CA – ANR_pinn simulation.
+  Parameters matched to the PhysicsNeMo PINN training configuration:
+    Density:    1.0 g/cm³       (PINN rho=1.0)
+    Viscosity:  0.00025 dyn·s/cm²  (PINN nu=0.00025, so mu = nu*rho = 0.00025)
+    Inflow:     Q = -0.027757 cm³/s  (parabolic peak = 0.375 cm/s over A=0.148037 cm²)
+    Outlet:     Dirichlet P=0   (PINN outlet Dirichlet)
+    Wall:       no-slip rigid
+
+  Inlet area:  0.148037 cm²  (R_eff = 0.2171 cm)
+  Q = V_peak * A / 2 = 0.375 * 0.148037 / 2 = 0.027757 cm³/s
+
+  Re = V_mean * D / nu = (V_peak/2) * (2*R_eff) / nu
+     = (0.375/2) * (2*0.2171) / 0.00025 = 325  (laminar)
+
+  This run is used to compare with the PhysicsNeMo PINN checkpoint directly,
+  without any velocity or pressure unit rescaling.
+  See: src/Meshing/compare_results.py
+
+  Derived from: src/SimVascular/inputs/0203_ANR_004cgs_solver.xml
+-->
+<svMultiPhysicsFile version="0.1">
+
+<GeneralSimulationParameters>
+
+  <Continue_previous_simulation> false </Continue_previous_simulation>
+
+  <Number_of_spatial_dimensions> 3 </Number_of_spatial_dimensions>
+
+  <!-- 3000 steps at dt=0.001 s; original converged ~step 1440 at similar Re -->
+  <Number_of_time_steps> 3000 </Number_of_time_steps>
+  <Time_step_size> 0.001 </Time_step_size>
+
+  <Spectral_radius_of_infinite_time_step> 0.5 </Spectral_radius_of_infinite_time_step>
+
+  <Searched_file_name_to_trigger_stop> STOP_SIM </Searched_file_name_to_trigger_stop>
+
+  <Save_results_to_VTK_format> 1 </Save_results_to_VTK_format>
+  <Name_prefix_of_saved_VTK_files> result </Name_prefix_of_saved_VTK_files>
+  <Increment_in_saving_VTK_files> 20 </Increment_in_saving_VTK_files>
+  <Start_saving_after_time_step> 1 </Start_saving_after_time_step>
+
+  <Increment_in_saving_restart_files> 20 </Increment_in_saving_restart_files>
+  <Convert_BIN_to_VTK_format> 0 </Convert_BIN_to_VTK_format>
+
+  <Verbose> 1 </Verbose>
+  <Warning> 0 </Warning>
+  <Debug> 0 </Debug>
+
+</GeneralSimulationParameters>
+
+<!-- Same mesh as ANR_004cgs -->
+<Add_mesh name="msh">
+
+  <Mesh_file_path>
+    /home/ucl/elen/ebarette/src/SimVascular/0203_H_CERE_CA/Simulations/ANR_004cgs/mesh-complete/mesh-complete.mesh.vtu
+  </Mesh_file_path>
+
+  <Add_face name="Inflow_ICA">
+    <Face_file_path>
+      /home/ucl/elen/ebarette/src/SimVascular/0203_H_CERE_CA/Simulations/ANR_004cgs/mesh-complete/mesh-surfaces/Inflow_ICA.vtp
+    </Face_file_path>
+  </Add_face>
+
+  <Add_face name="Out_ICA">
+    <Face_file_path>
+      /home/ucl/elen/ebarette/src/SimVascular/0203_H_CERE_CA/Simulations/ANR_004cgs/mesh-complete/mesh-surfaces/Out_ICA.vtp
+    </Face_file_path>
+  </Add_face>
+
+  <Add_face name="walls">
+    <Face_file_path>
+      /home/ucl/elen/ebarette/src/SimVascular/0203_H_CERE_CA/Simulations/ANR_004cgs/mesh-complete/walls_combined.vtp
+    </Face_file_path>
+  </Add_face>
+
+</Add_mesh>
+
+<Add_equation type="fluid">
+
+  <Coupled> true </Coupled>
+
+  <!-- Min_iterations=1 prevents singular-matrix crash at pseudo-steady state
+       (same fix as in ANR_004cgs after step ~1440). -->
+  <Min_iterations> 1 </Min_iterations>
+  <Max_iterations> 10 </Max_iterations>
+  <Tolerance> 1e-3 </Tolerance>
+
+  <Backflow_stabilization_coefficient> 0.2 </Backflow_stabilization_coefficient>
+
+  <!-- PINN: rho=1.0 g/cm³ -->
+  <Density> 1.0 </Density>
+
+  <!-- PINN: nu=0.00025 cm²/s, rho=1.0  →  mu = nu*rho = 0.00025 dyn·s/cm² -->
+  <Viscosity model="Constant">
+    <Value> 0.00025 </Value>
+  </Viscosity>
+
+  <Output type="Spatial">
+    <Velocity>   true </Velocity>
+    <Pressure>   true </Pressure>
+    <Traction>   true </Traction>
+    <Vorticity>  true </Vorticity>
+    <Divergence> true </Divergence>
+    <WSS>        true </WSS>
+  </Output>
+
+  <Output type="B_INT">
+    <Pressure> true </Pressure>
+    <Velocity> true </Velocity>
+  </Output>
+
+  <!-- GMRES: same fix as ANR_004cgs to avoid ge() crash at pseudo-steady state -->
+  <LS type="GMRES">
+    <Linear_algebra type="fsils">
+      <Preconditioner> fsils </Preconditioner>
+    </Linear_algebra>
+    <Max_iterations>       100  </Max_iterations>
+    <Tolerance>            0.05 </Tolerance>
+    <Absolute_tolerance>   1e-3 </Absolute_tolerance>
+    <Krylov_space_dimension> 100 </Krylov_space_dimension>
+  </LS>
+
+  <!-- Inflow: parabolic, Q = V_peak * A / 2 = 0.375 * 0.148037 / 2 = 0.027757 cm³/s -->
+  <Add_BC name="Inflow_ICA">
+    <Type> Dir </Type>
+    <Time_dependence> Steady </Time_dependence>
+    <Profile> Parabolic </Profile>
+    <Impose_flux> true </Impose_flux>
+    <Value> -0.027757 </Value>
+  </Add_BC>
+
+  <!-- Outlet: zero-traction Neumann (natural BC for pressure in weak NS form).
+       This is the correct way to impose P_ref=0 in svMultiPhysics.
+       Dir would enforce velocity=0 (wall), not pressure=0.
+       Neumann with value=0 sets total traction=0 → P≈0 for developed flow. -->
+  <Add_BC name="Out_ICA">
+    <Type> Neu </Type>
+    <Time_dependence> Steady </Time_dependence>
+    <Value> 0.0 </Value>
+  </Add_BC>
+
+  <!-- Wall: no-slip rigid (same as ANR_004cgs) -->
+  <Add_BC name="walls">
+    <Type> Dir </Type>
+    <Time_dependence> Steady </Time_dependence>
+    <Value> 0.0 </Value>
+  </Add_BC>
+
+</Add_equation>
+
+</svMultiPhysicsFile>
